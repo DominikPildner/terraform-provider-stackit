@@ -671,8 +671,7 @@ func (r *serverResource) Read(ctx context.Context, req resource.ReadRequest, res
 	region := r.providerData.GetRegionWithOverride(model.Region)
 	serverId := model.ServerId.ValueString()
 	if serverId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetServer with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

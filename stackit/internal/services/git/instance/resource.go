@@ -271,8 +271,7 @@ func (g *gitResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 	projectId := model.ProjectId.ValueString()
 	instanceId := model.InstanceId.ValueString()
 	if instanceId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetInstance with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

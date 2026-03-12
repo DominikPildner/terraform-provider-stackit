@@ -205,7 +205,7 @@ func (r *credentialResource) Read(ctx context.Context, req resource.ReadRequest,
 	instanceId := model.InstanceId.ValueString()
 	userName := model.Username.ValueString()
 	if userName == "" {
-		// Resource has not been created yet / identifier not known yet.
+		// Resource not yet created; ID is unknown.
 		// Do not call GetCredentials with an empty username.
 		resp.State.RemoveResource(ctx)
 		return

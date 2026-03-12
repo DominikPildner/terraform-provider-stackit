@@ -518,8 +518,7 @@ func (r *securityGroupRuleResource) Read(ctx context.Context, req resource.ReadR
 	securityGroupId := model.SecurityGroupId.ValueString()
 	securityGroupRuleId := model.SecurityGroupRuleId.ValueString()
 	if securityGroupRuleId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetSecurityGroupRule with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

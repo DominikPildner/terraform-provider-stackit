@@ -265,8 +265,7 @@ func (r *databaseResource) Read(ctx context.Context, req resource.ReadRequest, r
 	instanceId := model.InstanceId.ValueString()
 	databaseId := model.DatabaseId.ValueString()
 	if databaseId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetDatabase with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

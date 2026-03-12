@@ -283,8 +283,7 @@ func (r *logsInstanceResource) Read(ctx context.Context, req resource.ReadReques
 	region := model.Region.ValueString()
 	instanceID := model.InstanceID.ValueString()
 	if instanceID == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetLogsInstance with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

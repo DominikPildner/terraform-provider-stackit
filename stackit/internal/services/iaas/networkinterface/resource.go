@@ -337,8 +337,7 @@ func (r *networkInterfaceResource) Read(ctx context.Context, req resource.ReadRe
 	networkId := model.NetworkId.ValueString()
 	networkInterfaceId := model.NetworkInterfaceId.ValueString()
 	if networkInterfaceId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetNetworkInterface with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

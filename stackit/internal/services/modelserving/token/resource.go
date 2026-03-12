@@ -355,8 +355,7 @@ func (r *tokenResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	projectId := model.ProjectId.ValueString()
 	tokenId := model.TokenId.ValueString()
 	if tokenId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetToken with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

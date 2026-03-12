@@ -316,8 +316,7 @@ func (r *keyResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 	region := r.providerData.GetRegionWithOverride(model.Region)
 	keyId := model.KeyId.ValueString()
 	if keyId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetKey with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

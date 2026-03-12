@@ -284,8 +284,7 @@ func (r *routingTableResource) Read(ctx context.Context, req resource.ReadReques
 	organizationId := model.OrganizationId.ValueString()
 	routingTableId := model.RoutingTableId.ValueString()
 	if routingTableId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetRoutingTable with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

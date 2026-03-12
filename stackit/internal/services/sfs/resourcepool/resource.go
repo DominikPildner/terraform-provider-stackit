@@ -302,8 +302,7 @@ func (r *resourcePoolResource) Read(ctx context.Context, req resource.ReadReques
 	projectId := model.ProjectId.ValueString()
 	resourcePoolId := model.ResourcePoolId.ValueString()
 	if resourcePoolId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetResourcePool with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

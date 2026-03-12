@@ -329,8 +329,7 @@ func (r *exportPolicyResource) Read(ctx context.Context, req resource.ReadReques
 	projectId := model.ProjectId.ValueString()
 	exportPolicyId := model.ExportPolicyId.ValueString()
 	if exportPolicyId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetShareExportPolicy with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

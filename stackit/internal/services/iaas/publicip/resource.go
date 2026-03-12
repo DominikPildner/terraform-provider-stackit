@@ -240,8 +240,7 @@ func (r *publicIpResource) Read(ctx context.Context, req resource.ReadRequest, r
 	region := r.providerData.GetRegionWithOverride(model.Region)
 	publicIpId := model.PublicIpId.ValueString()
 	if publicIpId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetPublicIp with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

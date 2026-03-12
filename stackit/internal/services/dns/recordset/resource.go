@@ -268,8 +268,7 @@ func (r *recordSetResource) Read(ctx context.Context, req resource.ReadRequest, 
 	zoneId := model.ZoneId.ValueString()
 	recordSetId := model.RecordSetId.ValueString()
 	if recordSetId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetRecordSet with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

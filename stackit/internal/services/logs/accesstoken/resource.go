@@ -303,8 +303,7 @@ func (r *logsAccessTokenResource) Read(ctx context.Context, req resource.ReadReq
 	instanceID := model.InstanceID.ValueString()
 	accessTokenID := model.AccessTokenID.ValueString()
 	if accessTokenID == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetAccessToken with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

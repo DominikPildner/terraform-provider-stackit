@@ -334,8 +334,7 @@ func (s *scfOrganizationResource) Read(ctx context.Context, request resource.Rea
 	projectId := model.ProjectId.ValueString()
 	orgId := model.OrgId.ValueString()
 	if orgId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetOrganization with an empty ID.
+		// Resource not yet created; ID is unknown.
 		response.State.RemoveResource(ctx)
 		return
 	}

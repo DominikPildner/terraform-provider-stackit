@@ -245,8 +245,7 @@ func (r *keyRingResource) Read(ctx context.Context, req resource.ReadRequest, re
 	projectId := model.ProjectId.ValueString()
 	keyRingId := model.KeyRingId.ValueString()
 	if keyRingId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetKeyRing with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

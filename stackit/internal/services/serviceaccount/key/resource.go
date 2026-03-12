@@ -223,8 +223,7 @@ func (r *serviceAccountKeyResource) Read(ctx context.Context, req resource.ReadR
 	serviceAccountEmail := model.ServiceAccountEmail.ValueString()
 	keyId := model.KeyId.ValueString()
 	if keyId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetKey with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

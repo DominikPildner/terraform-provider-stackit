@@ -301,8 +301,7 @@ func (r *shareResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	resourcePoolId := model.ResourcePoolId.ValueString()
 	shareId := model.ShareId.ValueString()
 	if shareId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetShare with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

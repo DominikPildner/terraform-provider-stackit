@@ -407,8 +407,7 @@ func (r *networkAreaRouteResource) Read(ctx context.Context, req resource.ReadRe
 	region := r.providerData.GetRegionWithOverride(model.Region)
 	networkAreaRouteId := model.NetworkAreaRouteId.ValueString()
 	if networkAreaRouteId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetNetworkAreaRoute with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

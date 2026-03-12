@@ -493,8 +493,7 @@ func (r *instanceResource) Read(ctx context.Context, req resource.ReadRequest, r
 	region := r.providerData.GetRegionWithOverride(model.Region)
 	instanceId := model.InstanceId.ValueString()
 	if instanceId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetInstance with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

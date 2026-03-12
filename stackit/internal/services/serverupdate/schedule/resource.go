@@ -276,8 +276,7 @@ func (r *scheduleResource) Read(ctx context.Context, req resource.ReadRequest, r
 	serverId := model.ServerId.ValueString()
 	updateScheduleId := model.UpdateScheduleId.ValueInt64()
 	if updateScheduleId == 0 {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetUpdateSchedule with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

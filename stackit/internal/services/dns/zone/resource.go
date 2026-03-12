@@ -356,8 +356,7 @@ func (r *zoneResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 	projectId := model.ProjectId.ValueString()
 	zoneId := model.ZoneId.ValueString()
 	if zoneId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetZone with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

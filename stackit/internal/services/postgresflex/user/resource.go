@@ -284,8 +284,7 @@ func (r *userResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 	instanceId := model.InstanceId.ValueString()
 	userId := model.UserId.ValueString()
 	if userId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetUser with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

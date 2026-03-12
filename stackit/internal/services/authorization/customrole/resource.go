@@ -214,8 +214,7 @@ func (r *customRoleResource) Read(ctx context.Context, req resource.ReadRequest,
 
 	roleId := model.RoleId.ValueString()
 	if roleId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetRole with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

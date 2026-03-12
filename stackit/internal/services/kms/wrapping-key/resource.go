@@ -322,8 +322,7 @@ func (r *wrappingKeyResource) Read(ctx context.Context, request resource.ReadReq
 	region := r.providerData.GetRegionWithOverride(model.Region)
 	wrappingKeyId := model.WrappingKeyId.ValueString()
 	if wrappingKeyId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetWrappingKey with an empty ID.
+		// Resource not yet created; ID is unknown.
 		response.State.RemoveResource(ctx)
 		return
 	}

@@ -246,8 +246,7 @@ func (r *affinityGroupResource) Read(ctx context.Context, req resource.ReadReque
 	region := r.providerData.GetRegionWithOverride(model.Region)
 	affinityGroupId := model.AffinityGroupId.ValueString()
 	if affinityGroupId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetAffinityGroup with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}

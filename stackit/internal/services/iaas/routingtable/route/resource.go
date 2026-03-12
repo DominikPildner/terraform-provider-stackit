@@ -302,8 +302,7 @@ func (r *routeResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	networkAreaId := model.NetworkAreaId.ValueString()
 	routeId := model.RouteId.ValueString()
 	if routeId == "" {
-		// Resource has not been created yet / identifier not known yet.
-		// Do not call GetRoute with an empty ID.
+		// Resource not yet created; ID is unknown.
 		resp.State.RemoveResource(ctx)
 		return
 	}
