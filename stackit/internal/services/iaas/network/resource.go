@@ -475,6 +475,12 @@ func (r *networkResource) Read(ctx context.Context, req resource.ReadRequest, re
 	}
 	projectId := model.ProjectId.ValueString()
 	networkId := model.NetworkId.ValueString()
+	if networkId == "" {
+		// Resource has not been created yet / identifier not known yet.
+		// Do not call GetNetwork with an empty ID.
+		resp.State.RemoveResource(ctx)
+		return
+	}
 	region := r.providerData.GetRegionWithOverride(model.Region)
 	ctx = tflog.SetField(ctx, "project_id", projectId)
 	ctx = tflog.SetField(ctx, "network_id", networkId)

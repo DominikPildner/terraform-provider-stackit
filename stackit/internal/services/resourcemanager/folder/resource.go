@@ -253,6 +253,12 @@ func (r *folderResource) Read(ctx context.Context, req resource.ReadRequest, res
 	ctx = core.InitProviderContext(ctx)
 
 	containerId := model.ContainerId.ValueString()
+	if containerId == "" {
+		// Resource has not been created yet / identifier not known yet.
+		// Do not call GetFolder with an empty ID.
+		resp.State.RemoveResource(ctx)
+		return
+	}
 	folderName := model.Name.ValueString()
 	ctx = tflog.SetField(ctx, "folder_name", folderName)
 	ctx = tflog.SetField(ctx, "container_id", containerId)

@@ -282,6 +282,12 @@ func (r *logsInstanceResource) Read(ctx context.Context, req resource.ReadReques
 	projectID := model.ProjectID.ValueString()
 	region := model.Region.ValueString()
 	instanceID := model.InstanceID.ValueString()
+	if instanceID == "" {
+		// Resource has not been created yet / identifier not known yet.
+		// Do not call GetLogsInstance with an empty ID.
+		resp.State.RemoveResource(ctx)
+		return
+	}
 
 	ctx = tflog.SetField(ctx, "project_id", projectID)
 	ctx = tflog.SetField(ctx, "region", region)

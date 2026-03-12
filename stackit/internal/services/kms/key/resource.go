@@ -315,6 +315,12 @@ func (r *keyResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 	keyRingId := model.KeyRingId.ValueString()
 	region := r.providerData.GetRegionWithOverride(model.Region)
 	keyId := model.KeyId.ValueString()
+	if keyId == "" {
+		// Resource has not been created yet / identifier not known yet.
+		// Do not call GetKey with an empty ID.
+		resp.State.RemoveResource(ctx)
+		return
+	}
 
 	ctx = tflog.SetField(ctx, "keyring_id", keyRingId)
 	ctx = tflog.SetField(ctx, "project_id", projectId)

@@ -333,6 +333,12 @@ func (s *scfOrganizationResource) Read(ctx context.Context, request resource.Rea
 	// Extract the project ID and instance id of the model
 	projectId := model.ProjectId.ValueString()
 	orgId := model.OrgId.ValueString()
+	if orgId == "" {
+		// Resource has not been created yet / identifier not known yet.
+		// Do not call GetOrganization with an empty ID.
+		response.State.RemoveResource(ctx)
+		return
+	}
 	// Extract the region
 	region := s.providerData.GetRegionWithOverride(model.Region)
 	ctx = tflog.SetField(ctx, "project_id", projectId)

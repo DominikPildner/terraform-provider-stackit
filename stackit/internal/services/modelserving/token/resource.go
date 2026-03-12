@@ -354,6 +354,12 @@ func (r *tokenResource) Read(ctx context.Context, req resource.ReadRequest, resp
 
 	projectId := model.ProjectId.ValueString()
 	tokenId := model.TokenId.ValueString()
+	if tokenId == "" {
+		// Resource has not been created yet / identifier not known yet.
+		// Do not call GetToken with an empty ID.
+		resp.State.RemoveResource(ctx)
+		return
+	}
 	region := r.providerData.GetRegionWithOverride(model.Region)
 
 	ctx = tflog.SetField(ctx, "project_id", projectId)

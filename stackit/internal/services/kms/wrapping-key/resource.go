@@ -321,6 +321,12 @@ func (r *wrappingKeyResource) Read(ctx context.Context, request resource.ReadReq
 	keyRingId := model.KeyRingId.ValueString()
 	region := r.providerData.GetRegionWithOverride(model.Region)
 	wrappingKeyId := model.WrappingKeyId.ValueString()
+	if wrappingKeyId == "" {
+		// Resource has not been created yet / identifier not known yet.
+		// Do not call GetWrappingKey with an empty ID.
+		response.State.RemoveResource(ctx)
+		return
+	}
 
 	ctx = tflog.SetField(ctx, "keyring_id", keyRingId)
 	ctx = tflog.SetField(ctx, "project_id", projectId)

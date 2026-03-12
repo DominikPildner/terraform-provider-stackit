@@ -234,6 +234,12 @@ func (r *credentialsGroupResource) Read(ctx context.Context, req resource.ReadRe
 
 	projectId := model.ProjectId.ValueString()
 	credentialsGroupId := model.CredentialsGroupId.ValueString()
+	if credentialsGroupId == "" {
+		// Resource has not been created yet / identifier not known yet.
+		// Do not call GetCredentialsGroup with an empty ID.
+		resp.State.RemoveResource(ctx)
+		return
+	}
 	region := r.providerData.GetRegionWithOverride(model.Region)
 
 	ctx = tflog.SetField(ctx, "project_id", projectId)

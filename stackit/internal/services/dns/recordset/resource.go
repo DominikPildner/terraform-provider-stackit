@@ -267,6 +267,12 @@ func (r *recordSetResource) Read(ctx context.Context, req resource.ReadRequest, 
 	projectId := model.ProjectId.ValueString()
 	zoneId := model.ZoneId.ValueString()
 	recordSetId := model.RecordSetId.ValueString()
+	if recordSetId == "" {
+		// Resource has not been created yet / identifier not known yet.
+		// Do not call GetRecordSet with an empty ID.
+		resp.State.RemoveResource(ctx)
+		return
+	}
 	ctx = tflog.SetField(ctx, "project_id", projectId)
 	ctx = tflog.SetField(ctx, "zone_id", zoneId)
 	ctx = tflog.SetField(ctx, "record_set_id", recordSetId)

@@ -509,6 +509,12 @@ func (r *imageResource) Read(ctx context.Context, req resource.ReadRequest, resp
 	projectId := model.ProjectId.ValueString()
 	region := r.providerData.GetRegionWithOverride(model.Region)
 	imageId := model.ImageId.ValueString()
+	if imageId == "" {
+		// Resource has not been created yet / identifier not known yet.
+		// Do not call GetImage with an empty ID.
+		resp.State.RemoveResource(ctx)
+		return
+	}
 
 	ctx = core.InitProviderContext(ctx)
 

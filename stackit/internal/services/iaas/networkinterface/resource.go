@@ -336,6 +336,12 @@ func (r *networkInterfaceResource) Read(ctx context.Context, req resource.ReadRe
 	region := r.providerData.GetRegionWithOverride(model.Region)
 	networkId := model.NetworkId.ValueString()
 	networkInterfaceId := model.NetworkInterfaceId.ValueString()
+	if networkInterfaceId == "" {
+		// Resource has not been created yet / identifier not known yet.
+		// Do not call GetNetworkInterface with an empty ID.
+		resp.State.RemoveResource(ctx)
+		return
+	}
 
 	ctx = core.InitProviderContext(ctx)
 

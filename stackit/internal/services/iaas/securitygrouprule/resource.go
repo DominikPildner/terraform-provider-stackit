@@ -517,6 +517,12 @@ func (r *securityGroupRuleResource) Read(ctx context.Context, req resource.ReadR
 	region := r.providerData.GetRegionWithOverride(model.Region)
 	securityGroupId := model.SecurityGroupId.ValueString()
 	securityGroupRuleId := model.SecurityGroupRuleId.ValueString()
+	if securityGroupRuleId == "" {
+		// Resource has not been created yet / identifier not known yet.
+		// Do not call GetSecurityGroupRule with an empty ID.
+		resp.State.RemoveResource(ctx)
+		return
+	}
 
 	ctx = core.InitProviderContext(ctx)
 

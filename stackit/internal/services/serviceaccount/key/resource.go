@@ -222,6 +222,12 @@ func (r *serviceAccountKeyResource) Read(ctx context.Context, req resource.ReadR
 	projectId := model.ProjectId.ValueString()
 	serviceAccountEmail := model.ServiceAccountEmail.ValueString()
 	keyId := model.KeyId.ValueString()
+	if keyId == "" {
+		// Resource has not been created yet / identifier not known yet.
+		// Do not call GetKey with an empty ID.
+		resp.State.RemoveResource(ctx)
+		return
+	}
 
 	_, err := r.client.GetServiceAccountKey(ctx, projectId, serviceAccountEmail, keyId).Execute()
 	if err != nil {

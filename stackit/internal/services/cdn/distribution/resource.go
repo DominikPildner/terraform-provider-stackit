@@ -479,6 +479,12 @@ func (r *distributionResource) Read(ctx context.Context, req resource.ReadReques
 
 	projectId := model.ProjectId.ValueString()
 	distributionId := model.DistributionId.ValueString()
+	if distributionId == "" {
+		// Resource has not been created yet / identifier not known yet.
+		// Do not call GetDistribution with an empty ID.
+		resp.State.RemoveResource(ctx)
+		return
+	}
 	ctx = tflog.SetField(ctx, "project_id", projectId)
 	ctx = tflog.SetField(ctx, "distribution_id", distributionId)
 

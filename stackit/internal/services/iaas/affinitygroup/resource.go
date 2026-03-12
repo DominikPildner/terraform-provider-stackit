@@ -245,6 +245,12 @@ func (r *affinityGroupResource) Read(ctx context.Context, req resource.ReadReque
 	projectId := model.ProjectId.ValueString()
 	region := r.providerData.GetRegionWithOverride(model.Region)
 	affinityGroupId := model.AffinityGroupId.ValueString()
+	if affinityGroupId == "" {
+		// Resource has not been created yet / identifier not known yet.
+		// Do not call GetAffinityGroup with an empty ID.
+		resp.State.RemoveResource(ctx)
+		return
+	}
 
 	ctx = core.InitProviderContext(ctx)
 

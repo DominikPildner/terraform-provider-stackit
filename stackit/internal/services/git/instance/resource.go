@@ -270,6 +270,12 @@ func (g *gitResource) Read(ctx context.Context, req resource.ReadRequest, resp *
 	// Extract the project ID and instance id of the model
 	projectId := model.ProjectId.ValueString()
 	instanceId := model.InstanceId.ValueString()
+	if instanceId == "" {
+		// Resource has not been created yet / identifier not known yet.
+		// Do not call GetInstance with an empty ID.
+		resp.State.RemoveResource(ctx)
+		return
+	}
 
 	// Read the current git instance via id
 	gitInstanceResp, err := g.client.GetInstance(ctx, projectId, instanceId).Execute()

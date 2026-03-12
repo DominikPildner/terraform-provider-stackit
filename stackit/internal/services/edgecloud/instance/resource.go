@@ -321,6 +321,12 @@ func (i *instanceResource) Read(ctx context.Context, req resource.ReadRequest, r
 	projectId := model.ProjectId.ValueString()
 	region := i.providerData.GetRegionWithOverride(model.Region)
 	instanceId := model.InstanceId.ValueString()
+	if instanceId == "" {
+		// Resource has not been created yet / identifier not known yet.
+		// Do not call GetInstance with an empty ID.
+		resp.State.RemoveResource(ctx)
+		return
+	}
 	ctx = tflog.SetField(ctx, "project_id", projectId)
 	ctx = tflog.SetField(ctx, "instance_id", instanceId)
 	ctx = tflog.SetField(ctx, "region", region)
