@@ -649,29 +649,34 @@ func mapFields(ctx context.Context, networkResp *iaas.Network, model *Model, reg
 		model.IPv4Nameservers = types.ListNull(types.StringType)
 	} else {
 		respNameservers := *networkResp.Ipv4.Nameservers
-		modelNameservers, err := utils.ListValuetoStringSlice(model.Nameservers)
-		modelIPv4Nameservers, errIpv4 := utils.ListValuetoStringSlice(model.IPv4Nameservers)
-		if err != nil {
-			return fmt.Errorf("get current network nameservers from model: %w", err)
+		// Only update the field the user originally configured to avoid ConflictsWith validation errors.
+		// If neither was configured, update IPv4Nameservers (the non-deprecated field).
+		useDeprecatedNameservers := !model.Nameservers.IsNull()
+		if useDeprecatedNameservers {
+			modelNameservers, err := utils.ListValuetoStringSlice(model.Nameservers)
+			if err != nil {
+				return fmt.Errorf("get current network nameservers from model: %w", err)
+			}
+			reconciledNameservers := utils.ReconcileStringSlices(modelNameservers, respNameservers)
+			nameserversTF, diags := types.ListValueFrom(ctx, types.StringType, reconciledNameservers)
+			if diags.HasError() {
+				return fmt.Errorf("map network nameservers: %w", core.DiagsToError(diags))
+			}
+			model.Nameservers = nameserversTF
+			model.IPv4Nameservers = types.ListNull(types.StringType)
+		} else {
+			modelIPv4Nameservers, errIpv4 := utils.ListValuetoStringSlice(model.IPv4Nameservers)
+			if errIpv4 != nil {
+				return fmt.Errorf("get current IPv4 network nameservers from model: %w", errIpv4)
+			}
+			reconciledIPv4Nameservers := utils.ReconcileStringSlices(modelIPv4Nameservers, respNameservers)
+			ipv4NameserversTF, ipv4Diags := types.ListValueFrom(ctx, types.StringType, reconciledIPv4Nameservers)
+			if ipv4Diags.HasError() {
+				return fmt.Errorf("map IPv4 network nameservers: %w", core.DiagsToError(ipv4Diags))
+			}
+			model.Nameservers = types.ListNull(types.StringType)
+			model.IPv4Nameservers = ipv4NameserversTF
 		}
-		if errIpv4 != nil {
-			return fmt.Errorf("get current IPv4 network nameservers from model: %w", errIpv4)
-		}
-
-		reconciledNameservers := utils.ReconcileStringSlices(modelNameservers, respNameservers)
-		reconciledIPv4Nameservers := utils.ReconcileStringSlices(modelIPv4Nameservers, respNameservers)
-
-		nameserversTF, diags := types.ListValueFrom(ctx, types.StringType, reconciledNameservers)
-		ipv4NameserversTF, ipv4Diags := types.ListValueFrom(ctx, types.StringType, reconciledIPv4Nameservers)
-		if diags.HasError() {
-			return fmt.Errorf("map network nameservers: %w", core.DiagsToError(diags))
-		}
-		if ipv4Diags.HasError() {
-			return fmt.Errorf("map IPv4 network nameservers: %w", core.DiagsToError(ipv4Diags))
-		}
-
-		model.Nameservers = nameserversTF
-		model.IPv4Nameservers = ipv4NameserversTF
 	}
 
 	model.IPv4PrefixLength = types.Int64Null()
@@ -685,15 +690,22 @@ func mapFields(ctx context.Context, networkResp *iaas.Network, model *Model, reg
 			return fmt.Errorf("map network prefixes: %w", core.DiagsToError(diags))
 		}
 		if len(respPrefixes) > 0 {
-			model.IPv4Prefix = types.StringValue(respPrefixes[0])
-			_, netmask, err := net.ParseCIDR(respPrefixes[0])
-			if err != nil {
-				tflog.Error(ctx, fmt.Sprintf("ipv4_prefix_length: %+v", err))
-				// silently ignore parsing error for the netmask
-				model.IPv4PrefixLength = types.Int64Null()
+			// Only set IPv4PrefixLength if the user originally configured it (to avoid ConflictsWith ipv4_prefix).
+			// If the user configured ipv4_prefix or neither, only set IPv4Prefix.
+			useIPv4PrefixLength := !model.IPv4PrefixLength.IsNull()
+			if useIPv4PrefixLength {
+				_, netmask, err := net.ParseCIDR(respPrefixes[0])
+				if err != nil {
+					tflog.Error(ctx, fmt.Sprintf("ipv4_prefix_length: %+v", err))
+					model.IPv4PrefixLength = types.Int64Null()
+				} else {
+					ones, _ := netmask.Mask.Size()
+					model.IPv4PrefixLength = types.Int64Value(int64(ones))
+				}
+				model.IPv4Prefix = types.StringNull()
 			} else {
-				ones, _ := netmask.Mask.Size()
-				model.IPv4PrefixLength = types.Int64Value(int64(ones))
+				model.IPv4Prefix = types.StringValue(respPrefixes[0])
+				model.IPv4PrefixLength = types.Int64Null()
 			}
 		}
 
@@ -701,7 +713,8 @@ func mapFields(ctx context.Context, networkResp *iaas.Network, model *Model, reg
 		model.IPv4Prefixes = prefixesTF
 	}
 
-	if networkResp.Ipv4 == nil || networkResp.Ipv4.Gateway == nil {
+	if networkResp.Ipv4 == nil || networkResp.Ipv4.Gateway == nil || !model.IPv4PrefixLength.IsNull() {
+		// IPv4Gateway conflicts with IPv4PrefixLength; if PrefixLength is set, keep Gateway null.
 		model.IPv4Gateway = types.StringNull()
 	} else {
 		model.IPv4Gateway = types.StringPointerValue(networkResp.Ipv4.GetGateway())
